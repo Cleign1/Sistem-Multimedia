@@ -8,11 +8,19 @@ class Welcome extends CI_Controller {
 		$this->load->helpers('url');
 		$this->load->library('session');
 	 }
-	public function index()
+	public function index($id = FALSE)
 	{
-		$this->load->view('header');
-		$this->load->view('home');
-		$this->load->view('footer');
+		if ($id == false) {
+			$data['home_post'] = $this->model->read();
+			$this->load->view('header');
+			$this->load->view('home', vars: $data);
+			$this->load->view('footer');
+		} else {
+			$data['post'] = $this->model->read($id);
+			$this->load->view('header');
+			$this->load->view('post', vars: $data);
+			$this->load->view('footer');
+		}
 	}
 
 	public function create() {
