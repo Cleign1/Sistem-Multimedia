@@ -45,13 +45,52 @@ class Welcome extends CI_Controller {
 
 			$this->load->library('upload', $config);
 
-			if( $this->upload->do_upload('image1') == FALSE ) {
+			if( $this->upload->do_upload('image1')) {
 				$this->session->set_flashdata('error', $this->upload->display_errors());
 				redirect('welcome/index');
 			} else {
 				$filename = $this->upload->data('file_name');
 				$this->model->create($id, $filename);
 				redirect('');
+			}
+		}
+	}
+
+	public function update($id) {
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+
+		$this->form_validation->set_rules('name', 'Name', 'required');
+		$this->form_validation->set_rules('description', 'Description','required');
+
+		if( $this->form_validation->run() == FALSE ) {
+			$data['post'] = $this->model->read($id);
+			$this->load->view('header');
+			$this->load->view('update', $data);
+			$this->load->view('footer');
+		} else {
+			if ($this->input->post('file')){
+				$post = $this->model->read($id);
+	
+				$config['upload_path'] = './upload/post';
+				$config['allowed_types'] = 'jpg|png|jpeg';
+				$config['max_size'] = '100000';
+				$config['file_ext_tolower'] = TRUE;
+				$config['overwrite'] = TRUE;
+				$config['file_name'] = $post->filename;
+	
+				$this->load->library('upload', $config);
+	
+				if( $this->upload->do_upload('image1') == FALSE ) {
+					$this->session->set_flashdata('error', $this->upload->display_errors());
+					redirect('welcome/update');
+				} else {
+					$this->model->update($id);
+					redirect();
+				}
+			} else {
+				$this->model->update($id);
+				redirect();
 			}
 		}
 	}
