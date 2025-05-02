@@ -41,11 +41,11 @@ class Welcome extends CI_Controller {
 			$config['allowed_types'] = 'jpg|png|jpeg';
 			$config['max_size'] = '100000';
 			$config['file_ext_tolower'] = TRUE;
-			$config['filename'] = str_replace('.', '_', $id);
+			$config['file_name'] = str_replace('.', '_', $id);
 
 			$this->load->library('upload', $config);
 
-			if( $this->upload->do_upload('image1')) {
+			if( $this->upload->do_upload('image1') == FALSE ) {
 				$this->session->set_flashdata('error', $this->upload->display_errors());
 				redirect('welcome/index');
 			} else {
@@ -93,5 +93,27 @@ class Welcome extends CI_Controller {
 				redirect();
 			}
 		}
+	}
+
+	public function delete($id = FALSE) {
+		$post = $this->model->read($id);
+		$this->model->delete($id);
+
+		unlink('./upload/post/' . $post->filename);
+		redirect();
+	}
+
+	public function deleteAll() {
+		$this->model->deleteAll();
+
+		$directory = './upload/post/';
+		$files = glob($directory . '*');
+
+		foreach($files as $file) {
+			if(is_file($file)) {
+				unlink($file);
+			}
+		}
+		redirect();
 	}
 }
