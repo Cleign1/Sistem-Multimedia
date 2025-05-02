@@ -2,6 +2,10 @@
 echo $this->session->flashdata('error');
 ?>
 
+<div class="col s6" style="margin-top: 10px; margin-bottom: 10px;">
+    <a href="<?= site_url('welcome/deleteAll/'); ?>" class="btn red" id="deleteLink">Delete All</a>
+</div>
+
 <ul class="collection">
     <?php foreach ($home_post as $post) : ?>
             <li class="collection-item avatar">
@@ -14,3 +18,12 @@ echo $this->session->flashdata('error');
             </li>
     <?php endforeach; ?>
 </ul>
+
+<script>
+    document.getElementById("deleteLink").addEventListener("click", function(event) {
+        var confirmation = confirm("Apakah ingin dihapus semua?");
+        if (!confirmation) {
+            event.preventDefault();
+        }
+    });
+</script>
